@@ -1,21 +1,28 @@
 function sendCustomEmail() {
-    const ui = SpreadsheetApp.getUi(); // Assuming this runs from a Google Sheets environment
-    const numRecipients = parseInt(ui.prompt("Enter the number of recipients:").getResponseText());
+    const numRecipientsInput = Browser.inputBox("Enter the number of recipients:");
+    if (numRecipientsInput === "cancel" || numRecipientsInput === null) return;
+    const numRecipients = parseInt(numRecipientsInput);
 
     let recipients = [];
     for (let i = 0; i < numRecipients; i++) {
-        const recipientEmail = ui.prompt(`Enter the email address for recipient ${i + 1}:`).getResponseText();
+        const recipientEmail = Browser.inputBox(`Enter the email address for recipient ${i + 1}:`);
+        if (recipientEmail === "cancel" || recipientEmail === null) return;
         recipients.push(recipientEmail);
     }
 
-    const subject = ui.prompt("Enter the subject of the email:").getResponseText();
-    const body = ui.prompt("Enter the body of the email:").getResponseText();
+    const subject = Browser.inputBox("Enter the subject of the email:");
+    if (subject === "cancel" || subject === null) return;
 
-    const attachmentResponse = ui.prompt("Do you want to add an attachment? (yes/no)").getResponseText().toLowerCase();
+    const body = Browser.inputBox("Enter the body of the email:");
+    if (body === "cancel" || body === null) return;
+
+    const attachmentResponse = Browser.inputBox("Do you want to add an attachment? (yes/no)");
+    if (attachmentResponse === "cancel" || attachmentResponse === null) return;
+
     let attachments = [];
-
-    if (attachmentResponse === "yes") {
-        const attachmentId = ui.prompt("Please enter the Google Drive file ID for the attachment:").getResponseText();
+    if (attachmentResponse.toLowerCase() === "yes") {
+        const attachmentId = Browser.inputBox("Please enter the Google Drive file ID for the attachment:");
+        if (attachmentId === "cancel" || attachmentId === null) return;
         const file = DriveApp.getFileById(attachmentId);
         attachments.push(file);
     }
@@ -31,5 +38,5 @@ function sendCustomEmail() {
         console.log('Email sent to: ' + recipient);
     });
 
-    ui.alert("Emails sent successfully!");
+    Browser.msgBox("Emails sent successfully!");
 }
